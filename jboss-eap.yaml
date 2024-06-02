@@ -130,8 +130,8 @@
            url: "{{ app_url }}"
            dest: "{{ eap_deploy_dir }}"
            
-   #   - name: Deploy the war file on each standalone server (replace if deployed)
-   #     command: "sh {{ eap_home }}/bin/jboss-cli.sh -u=ram -p=password --controller=localhost:9990 --connect --command='deploy {{ eap_deploy_dir }}/{{ app_name }} --force'"
+      - name: Deploy the war file on each standalone server (replace if deployed)
+        command: "sh {{ eap_home }}/bin/jboss-cli.sh -u=ram -p=password --controller=localhost:9990 --connect --command='deploy {{ eap_deploy_dir }}/{{ app_name }} --force'"
       
       - name: Clear JBoss Zip File
         file:
