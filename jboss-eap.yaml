@@ -20,7 +20,7 @@
   tasks:
       - name: Install JBoss Requirements
         ansible.builtin.dnf:
-           name: java-1.8.0-openjdk-devel, unzip, initscripts, hostname
+           name: unzip, initscripts, hostname
            state: present
 
       - name: Check if service exists
@@ -113,26 +113,34 @@
            mode: 0755
 
       - name: Enable EAP service
+        become: true
         service:
-            name: jboss-eap-rhel.sh
-            enabled: yes
+          name: jboss-eap-rhel.sh
+          enabled: yes
 
       - name: Start EAP service
-        service:
-            name: jboss-eap-rhel
-            state: started
+        shell: "nohup sh {{ eap_home }}/bin/standalone.sh  -c standalone-full.xml -b 0.0.0.0 -Djboss.as.management.blocking.timeout=5000 2>&1 &"
 
-      - name: Create Admin Users ram on each application
-        command: "sh {{ eap_home }}/bin/add-user.sh ram password"
+
+      - name: Create Admin Users juhan on each application
+        command: "sh {{ eap_home }}/bin/add-user.sh juhan password"
 
       - name: Ensures webapp War file has been retrieved from the url
         get_url:
            url: "{{ app_url }}"
            dest: "{{ eap_deploy_dir }}"
-           
-      - name: Deploy the war file on each standalone server (replace if deployed)
-        command: "sh {{ eap_home }}/bin/jboss-cli.sh -u=ram -p=password --controller=localhost:9990 --connect --command='deploy {{ eap_deploy_dir }}/{{ app_name }} --force'"
-      
+
+      - name: Copy application to JBoss deployments directory
+        copy:
+          src: "{{ eap_deploy_dir }}/{{ app_name }}"
+          dest: "{{ eap_home }}/standalone/deployments/{{ app_name }}"
+          remote_src: True
+
+
+      - name: Print deployment status
+        debug:
+          msg: "Application {{ app_name }} deployed successfully."
+
       - name: Clear JBoss Zip File
         file:
            state: absent
