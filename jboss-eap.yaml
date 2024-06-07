@@ -2,7 +2,7 @@
 - name: "JBoss EAP installation and configuration"
   hosts: appservers
   become: yes
-  #become_user: ansible
+  become_user: root
   vars:
     jboss_eap_user: jboss-eap
     jboss_eap_group: jboss-eap
