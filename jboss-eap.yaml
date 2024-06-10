@@ -2,7 +2,6 @@
 - name: "JBoss EAP installation and configuration"
   hosts: appservers
   become: yes
-  #become_user: root
   vars:
     jboss_eap_user: jboss-eap
     jboss_eap_group: jboss-eap
@@ -103,42 +102,13 @@
           owner: "{{ jboss_eap_user }}"
           group: "{{ jboss_eap_group }}"
 
-      - name: Copy JBoss EAP Service File
-        copy:
-           src: "{{ eap_home }}/bin/init.d/jboss-eap-rhel.sh"
-           dest: "{{ rhel_initd }}"
-           remote_src: True
-           owner: "{{ jboss_eap_user }}"
-           group: "{{ jboss_eap_group }}"
-           mode: 0755
 
-      - name: Enable EAP service
-        become: true
-        service:
-          name: jboss-eap-rhel.sh
-          enabled: yes
-
-      - name: Start EAP service
+      - name: Start EAP servers
         shell: "nohup sh {{ eap_home }}/bin/standalone.sh  -c standalone-full.xml -b 0.0.0.0 -Djboss.as.management.blocking.timeout=5000 2>&1 &"
 
       - name: Create Admin Users juhan on each application
         command: "sh {{ eap_home }}/bin/add-user.sh juhan password"
 
-      - name: Ensures webapp War file has been retrieved from the url
-        get_url:
-           url: "{{ app_url }}"
-           dest: "{{ eap_deploy_dir }}"
-
-      - name: Copy application to JBoss deployments directory
-        copy:
-          src: "{{ eap_deploy_dir }}/{{ app_name }}"
-          dest: "{{ eap_home }}/standalone/deployments/{{ app_name }}"
-          remote_src: True
-
-
-      - name: Print deployment status
-        debug:
-          msg: "Application {{ app_name }} deployed successfully."
 
       - name: Clear JBoss Zip File
         file:
