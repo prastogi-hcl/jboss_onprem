@@ -105,9 +105,3 @@
 
       - name: Create Admin Users juhan on each application
         command: "sh {{ eap_home }}/bin/add-user.sh juhan password"
-
-
-      - name: Clear JBoss Zip File
-        file:
-           state: absent
-           dest: "{{ eap_deploy_dir }}/{{ app_name }}"
