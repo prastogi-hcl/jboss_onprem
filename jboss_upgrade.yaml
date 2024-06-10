@@ -34,13 +34,10 @@
       debug:
         msg: "{{ jboss_version_output.stdout }}"
 
-
     - name: Stop JBoss server
       command: "{{ jboss_home }}/bin/jboss-cli.sh --connect command=:shutdown"
       args:
         chdir: "{{ jboss_home }}"
-
-
 
     - name: Apply JBoss patch
       command: "{{ jboss_home }}/bin/jboss-cli.sh --command='patch apply {{ patch_file }}'"
@@ -73,7 +70,6 @@
           owner: "{{ jboss_eap_user }}"
           group: "{{ jboss_eap_group }}"
 
-
     - name: Start JBoss server
       shell: "nohup sh {{ jboss_home }}/bin/standalone.sh  -c standalone-full.xml -b 0.0.0.0 -Djboss.as.management.blocking.timeout=5000 2>&1 &"
 
@@ -83,3 +79,7 @@
     - name: Get JBoss version after  apply patch
       command: "{{ jboss_home }}/bin/jboss-cli.sh --connect --commands=version"
       register: jboss_version_output
+
+    - name: Display JBoss version
+      debug:
+        msg: "{{ jboss_version_output.stdout }}"
