@@ -1,0 +1,72 @@
+- name: Upgrade JBoss Application Server
+  hosts: appservers
+  become: yes
+  vars:
+    jboss_new_version: "7.4.10"
+    jboss_install_dir: "/opt/"
+    jboss_eap_user: jboss-eap
+    jboss_eap_group: jboss-eap
+    eap_version: 7.4
+    eap_home: "{{ jboss_install_dir }}/jboss-eap-{{ jboss_new_version }}"
+    eap_all: "{{ eap_deploy_dir }}/jboss-eap-*/"
+    rhel_initd: /etc/init.d
+    jboss_eap_service_conf_dir: "/etc/default"
+    jboss_home: /opt/jboss-eap-7.4
+    patch_file: /tmp/jboss-eap-7.4.9-patch.zip
+    backup_dir: /opt/jboss-backup
+  tasks:
+    - name: Ensure backup directory exists
+      file:
+        path: "{{ backup_dir }}"
+        state: directory
+
+    - name: Backup JBoss home directory
+      command: tar czf {{ backup_dir }}/jboss-eap-7.4-backup-{{ ansible_date_time.iso8601 }}.tar.gz -C {{ jboss_home }} .
+      args:
+        creates: "{{ backup_dir }}/jboss-eap-7.4-backup-{{ ansible_date_time.iso8601 }}.tar.gz"
+
+    - name: Stop JBoss server
+      command: "{{ jboss_home }}/bin/jboss-cli.sh --connect command=:shutdown"
+      args:
+        chdir: "{{ jboss_home }}"
+
+    - name: Apply JBoss patch
+      command: "{{ jboss_home }}/bin/jboss-cli.sh --command='patch apply {{ patch_file }}'"
+      args:
+        chdir: "{{ jboss_home }}"
+
+    - name: Create symlink
+      file:
+         src: "{{jboss_home}}"
+         dest: "/opt/jboss-eap"
+         state: link
+         force: yes
+
+    - name: Modify JBoss EAP Configuration File
+      lineinfile:
+          state: present
+          path: "{{ jboss_home }}/bin/init.d/jboss-eap.conf"
+          regexp: "{{ item.regexp }}"
+          line: "{{ item.line }}"
+      with_items:
+        - {regexp: "^# JBOSS_USER=", line: "JBOSS_USER=jboss-eap"}
+        - {regexp: "^# JBOSS_CONFIG=", line: "JBOSS_CONFIG=standalone-ha.xml"}
+        - {regexp: "^# JBOSS_OPTS=", line: "JBOSS_OPTS=\"-b 0.0.0.0 -bprivate `hostname -i` -Djboss.node.name={{ inventory_hostname }}\""}
+
+    - name: Copy JBoss Service Configuration File
+      copy:
+          src: "{{ jboss_home }}/bin/init.d/jboss-eap.conf"
+          dest: "{{ jboss_eap_service_conf_dir }}/"
+          remote_src: True
+          owner: "{{ jboss_eap_user }}"
+          group: "{{ jboss_eap_group }}"
+
+
+    - name: Start JBoss server
+      shell: "nohup sh {{ jboss_home }}/bin/standalone.sh  -c standalone-full.xml -b 0.0.0.0 -Djboss.as.management.blocking.timeout=5000 2>&1 &"
+
+
+        #    - name: Clean up downloaded files
+        # file:
+        # path: "{{ patch_file }}"
+        #state: absent
