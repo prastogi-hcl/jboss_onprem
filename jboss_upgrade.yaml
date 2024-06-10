@@ -12,8 +12,9 @@
     rhel_initd: /etc/init.d
     jboss_eap_service_conf_dir: "/etc/default"
     jboss_home: /opt/jboss-eap-7.4
-    patch_file: /tmp/jboss-eap-7.4.9-patch.zip
+    patch_file: /tmp/jboss-eap-7.4.10-patch.zip
     backup_dir: /opt/jboss-backup
+    sleep_interval: 60
   tasks:
     - name: Ensure backup directory exists
       file:
@@ -25,10 +26,21 @@
       args:
         creates: "{{ backup_dir }}/jboss-eap-7.4-backup-{{ ansible_date_time.iso8601 }}.tar.gz"
 
+    - name: Get JBoss version before apply patch
+      command: "{{ jboss_home }}/bin/jboss-cli.sh --connect --commands=version"
+      register: jboss_version_output
+
+    - name: Display JBoss version
+      debug:
+        msg: "{{ jboss_version_output.stdout }}"
+
+
     - name: Stop JBoss server
       command: "{{ jboss_home }}/bin/jboss-cli.sh --connect command=:shutdown"
       args:
         chdir: "{{ jboss_home }}"
+
+
 
     - name: Apply JBoss patch
       command: "{{ jboss_home }}/bin/jboss-cli.sh --command='patch apply {{ patch_file }}'"
@@ -65,8 +77,9 @@
     - name: Start JBoss server
       shell: "nohup sh {{ jboss_home }}/bin/standalone.sh  -c standalone-full.xml -b 0.0.0.0 -Djboss.as.management.blocking.timeout=5000 2>&1 &"
 
+    - name: sleep for a specified interval
+      command: sleep '{{ sleep_interval }}'
 
-        #    - name: Clean up downloaded files
-        # file:
-        # path: "{{ patch_file }}"
-        #state: absent
+    - name: Get JBoss version after  apply patch
+      command: "{{ jboss_home }}/bin/jboss-cli.sh --connect --commands=version"
+      register: jboss_version_output
