@@ -1,0 +1,26 @@
+- name: Increase JBoss Heap Size
+  hosts: appservers
+  become: yes
+  vars:
+    jboss_home: /opt/jboss-eap-7.4
+  tasks:
+    - name: Ensure JBoss is stopped
+      command: "{{ jboss_home }}/bin/jboss-cli.sh --connect command=:shutdown"
+      args:
+        chdir: "{{ jboss_home }}"
+
+    - name: Backup existing standalone.conf
+      copy:
+        src:  "{{ jboss_home }}/bin/standalone.conf"
+        dest:  "{{ jboss_home }}/bin/standalone.conf.bak"
+        remote_src: yes
+
+    - name: Modify heap size in standalone.conf
+      lineinfile:
+        path: "{{ jboss_home }}/bin/standalone.conf"
+        regexp: '^JAVA_OPTS=".*-Xms.*-Xmx.*"'
+        line: 'JAVA_OPTS="-Xms2g -Xmx2g -XX:MaxPermSize=512m"'
+
+    - name: Ensure JBoss is started
+      shell: "nohup sh {{ jboss_home }}/bin/standalone.sh  -c standalone-full.xml -b 0.0.0.0 -Djboss.as.management.blocking.timeout=5000 2>&1 &"
+
