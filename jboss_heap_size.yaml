@@ -19,7 +19,7 @@
       lineinfile:
         path: "{{ jboss_home }}/bin/standalone.conf"
         regexp: '^JAVA_OPTS=".*-Xms.*-Xmx.*"'
-        line: 'JAVA_OPTS="-Xms2g -Xmx2g -XX:MaxPermSize=512m"'
+        line: 'JAVA_OPTS="-Xms1.5g -Xmx1.5g -XX:MaxPermSize=512m"'
 
     - name: Ensure JBoss is started
       shell: "nohup sh {{ jboss_home }}/bin/standalone.sh  -c standalone-full.xml -b 0.0.0.0 -Djboss.as.management.blocking.timeout=5000 2>&1 &"
