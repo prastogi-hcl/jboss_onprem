@@ -54,7 +54,6 @@
         file:
           state: absent
           path: "{{ eap_all }}"
-
       - name: "Obtains JBoss repository"
         get_url:
            url: "{{ eap_link }}"
