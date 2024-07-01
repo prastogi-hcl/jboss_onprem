@@ -97,7 +97,7 @@
           remote_src: True
           owner: "{{ jboss_eap_user }}"
           group: "{{ jboss_eap_group }}"
-
+          
       - name: Start EAP servers
         shell: "nohup sh {{ eap_home }}/bin/standalone.sh  -c standalone-full.xml -b 0.0.0.0 -Djboss.as.management.blocking.timeout=5000 2>&1 &"
 
