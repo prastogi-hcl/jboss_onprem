@@ -5,7 +5,7 @@
   vars:
     jboss_eap_user: jboss-eap
     jboss_eap_group: jboss-eap
-    eap_deploy_dir: /opt
+    eap_deploy_dir: /home/ansible
     eap_version: 7.4
     eap_link: https://www.dropbox.com/s/ukq5tbrfegkz313/jboss-eap-7.4.0.zip?dl=1
     eap_archive: jboss-eap-7.4.0.zip
