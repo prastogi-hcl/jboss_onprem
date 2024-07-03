@@ -10,8 +10,8 @@
     eap_version:  7.4
     jboss_home: "{{ eap_deploy_dir }}/jboss-eap-{{eap_version}}"
     eap_all: "{{ eap_deploy_dir }}/jboss-eap-*/"
-    deployment_file: /tmp/__calendar.war
-    app_name: '__calendar.war'
+    deployment_file: /tmp/__browsestore.war
+    app_name: '__browsestore.war'
   tasks:
   - name: Ensures webapp War file has been retrieved from the url
     copy:
