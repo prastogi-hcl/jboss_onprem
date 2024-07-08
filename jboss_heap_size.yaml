@@ -1,5 +1,5 @@
 - name: Increase JBoss Heap Size
-  hosts: appservers
+  hosts: jboss-servers
   become: yes
   vars:
     jboss_home: /opt/jboss-eap-7.4
