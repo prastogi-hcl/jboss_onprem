@@ -1,5 +1,5 @@
 - name: Upgrade JBoss Application Server
-  hosts: appservers
+  hosts: jboss-servers
   become: yes
   vars:
     jboss_new_version: "7.4.10"
