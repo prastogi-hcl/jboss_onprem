@@ -101,5 +101,8 @@
       - name: Start EAP servers
         shell: "nohup sh {{ eap_home }}/bin/standalone.sh  -c standalone-full.xml -b 0.0.0.0 -Djboss.as.management.blocking.timeout=5000 2>&1 &"
 
-     # - name: Create Admin Users juhan on each application
-     #   shell: "sh {{ eap_home }}/bin/add-user.sh juhan passw0rd"
+      - name: sleep for a specified interval
+        command: sleep '{{ sleep_interval }}'
+      
+      - name: Create Admin Users juhan on each application
+        shell: "sh {{ eap_home }}/bin/add-user.sh juhan passw0rd"
