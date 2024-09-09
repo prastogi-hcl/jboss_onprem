@@ -73,9 +73,16 @@
     - name: Start JBoss server
       shell: "nohup sh {{ eap_home }}/bin/standalone.sh  -c standalone-full.xml -b 0.0.0.0 -Djboss.as.management.blocking.timeout=5000 2>&1 &"
 
-    - name: sleep for a specified interval
-      command: sleep '{{ sleep_interval }}'
-
+   # - name: sleep for a specified interval
+   #   command: sleep '{{ sleep_interval }}'
+   
+     - name: Wait for Jboss to start
+       wait_for:
+         port: 8080
+         delay: 10
+         timeout: 300
+         state: started
+         
     - name: Get JBoss version after  apply patch
       command: "{{ eap_home }}/bin/jboss-cli.sh --connect --commands=version"
       register: jboss_version_output
