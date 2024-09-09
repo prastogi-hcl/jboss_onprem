@@ -12,7 +12,7 @@
     rhel_initd: /etc/init.d
     jboss_eap_service_conf_dir: "/etc/default"
     jboss_home: /opt/jboss-eap-7.4
-    patch_file: /tmp/jboss-eap-7.4.10-patch.zip
+    patch_file: /tmp/jboss-eap-7.4.11-patch.zip
     backup_dir: /opt/jboss-backup
     sleep_interval: 60
   tasks:
