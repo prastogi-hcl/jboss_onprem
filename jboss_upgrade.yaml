@@ -76,9 +76,9 @@
     - name: sleep for a specified interval
       command: sleep '{{ sleep_interval }}'
 
- #   - name: Get JBoss version after  apply patch
- #     command: "{{ jboss_home }}/bin/jboss-cli.sh --connect --commands=version"
- #     register: jboss_version_output
+    - name: Get JBoss version after  apply patch
+      command: "{{ jboss_home }}/bin/jboss-cli.sh --connect --commands=version"
+      register: jboss_version_output
 
     - name: Display JBoss version
       debug:
