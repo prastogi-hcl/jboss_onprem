@@ -12,6 +12,7 @@
     jboss_eap_service_conf_dir: "/etc/default"
     jboss_home: /opt/jboss-eap-7.4
     patch_file: /tmp/jboss-eap-7.4.11-patch.zip
+    eap_home: "{{ eap_deploy_dir }}/jboss-eap-{{eap_version}}"
     backup_dir: /opt/jboss-backup
     sleep_interval: 60
   tasks:
@@ -70,13 +71,13 @@
           group: "{{ jboss_eap_group }}"
 
     - name: Start JBoss server
-      shell: "nohup sh {{ jboss_home }}/bin/standalone.sh  -c standalone-full.xml -b 0.0.0.0 -Djboss.as.management.blocking.timeout=5000 2>&1 &"
+      shell: "nohup sh {{ eap_home }}/bin/standalone.sh  -c standalone-full.xml -b 0.0.0.0 -Djboss.as.management.blocking.timeout=5000 2>&1 &"
 
     - name: sleep for a specified interval
       command: sleep '{{ sleep_interval }}'
 
     - name: Get JBoss version after  apply patch
-      command: "{{ jboss_home }}/bin/jboss-cli.sh --connect --commands=version"
+      command: "{{ eap_home }}/bin/jboss-cli.sh --connect --commands=version"
       register: jboss_version_output
 
     - name: Display JBoss version
