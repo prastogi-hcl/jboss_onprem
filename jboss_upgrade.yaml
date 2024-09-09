@@ -76,12 +76,12 @@
    # - name: sleep for a specified interval
    #   command: sleep '{{ sleep_interval }}'
    
-     - name: Wait for Jboss to start
-       wait_for:
-         port: 8080
-         delay: 10
-         timeout: 300
-         state: started
+    - name: Wait for Jboss to start
+      wait_for:
+        port: 8080
+        delay: 10
+        timeout: 300
+        state: started
          
     - name: Get JBoss version after  apply patch
       command: "{{ eap_home }}/bin/jboss-cli.sh --connect --commands=version"
