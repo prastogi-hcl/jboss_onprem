@@ -2,7 +2,7 @@
   hosts: jboss-servers
   become: yes
   vars:
-    jboss_new_version: "7.4.10"
+    jboss_new_version: "7.4.11"
     jboss_install_dir: "/opt/"
     jboss_eap_user: jboss-eap
     jboss_eap_group: jboss-eap
