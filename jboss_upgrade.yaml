@@ -7,7 +7,6 @@
     jboss_eap_user: jboss-eap
     jboss_eap_group: jboss-eap
     eap_version: 7.4
-    eap_home: "{{ jboss_install_dir }}/jboss-eap-{{ jboss_new_version }}"
     eap_all: "{{ eap_deploy_dir }}/jboss-eap-*/"
     rhel_initd: /etc/init.d
     jboss_eap_service_conf_dir: "/etc/default"
