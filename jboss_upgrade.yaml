@@ -14,7 +14,7 @@
     jboss_home: /opt/jboss-eap-7.4
     patch_file: /tmp/jboss-eap-7.4.11-patch.zip
     backup_dir: /opt/jboss-backup
-    sleep_interval: 120
+    sleep_interval: 60
   tasks:
     - name: Ensure backup directory exists
       file:
@@ -76,9 +76,9 @@
     - name: sleep for a specified interval
       command: sleep '{{ sleep_interval }}'
 
-    - name: Get JBoss version after  apply patch
-      command: "{{ jboss_home }}/bin/jboss-cli.sh --connect --commands=version"
-      register: jboss_version_output
+ #   - name: Get JBoss version after  apply patch
+ #     command: "{{ jboss_home }}/bin/jboss-cli.sh --connect --commands=version"
+ #     register: jboss_version_output
 
     - name: Display JBoss version
       debug:
