@@ -3,7 +3,7 @@
   become: yes
   vars:
     jboss_new_version: "7.4.11"
-    jboss_install_dir: "/opt/"
+    eap_deploy_dir: /opt
     jboss_eap_user: jboss-eap
     jboss_eap_group: jboss-eap
     eap_version: 7.4
