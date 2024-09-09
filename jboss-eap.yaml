@@ -13,6 +13,7 @@
     eap_all: "{{ eap_deploy_dir }}/jboss-eap-*/"
     rhel_initd: /etc/init.d
     jboss_eap_service_conf_dir: "/etc/default"
+    sleep_interval: 60
   tasks:
       - name: Install JBoss Requirements
         ansible.builtin.dnf:
