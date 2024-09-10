@@ -1,0 +1,109 @@
+- name: Upgrade JBoss Application Server
+  hosts: jboss-servers
+  become: yes
+  vars:
+    jboss_new_version: "7.4.10"
+    eap_deploy_dir: /opt
+    jboss_eap_user: jboss-eap
+    jboss_eap_group: jboss-eap
+    eap_version: 7.4
+    eap_all: "{{ eap_deploy_dir }}/jboss-eap-*/"
+    rhel_initd: /etc/init.d
+    jboss_eap_service_conf_dir: "/etc/default"
+    jboss_home: /opt/jboss-eap-7.4
+    patch_file: /tmp/jboss-eap-7.4.10-patch.zip
+    eap_home: "{{ eap_deploy_dir }}/jboss-eap-{{eap_version}}"
+    backup_dir: /opt/jboss-backup
+    sleep_interval: 60
+    jboss_logs: "{{ jboss_home }}/standalone/log/server.log"
+
+  tasks:
+    - name: Ensure backup directory exists
+      file:
+        path: "{{ backup_dir }}"
+        state: directory
+
+    - name: Backup JBoss home directory
+      command: tar czf {{ backup_dir }}/jboss-eap-7.4-backup-{{
+ansible_date_time.iso8601 }}.tar.gz -C {{ jboss_home }} .
+      args:
+        creates: "{{ backup_dir }}/jboss-eap-7.4-backup-{{
+ansible_date_time.iso8601 }}.tar.gz"
+
+    - name: Get JBoss version before applying patch
+      command: "{{ jboss_home }}/bin/jboss-cli.sh --connect --commands=version"
+      register: jboss_version_output
+
+    - name: Display JBoss version before patch
+      debug:
+        msg: "{{ jboss_version_output.stdout }}"
+
+    - name: Stop JBoss server
+      command: "{{ jboss_home }}/bin/jboss-cli.sh --connect command=:shutdown"
+      args:
+        chdir: "{{ jboss_home }}"
+
+    - name: Check if JBoss stopped
+      shell: "ps aux | grep jboss | grep -v grep"
+      register: jboss_process_check
+      failed_when: jboss_process_check.stdout != ""
+
+    - name: Apply JBoss patch
+      command: "{{ jboss_home }}/bin/jboss-cli.sh --command='patch apply {{ patch_file }}'"
+      args:
+        chdir: "{{ jboss_home }}"
+      register: patch_apply_output
+
+    - name: Verify patch application
+      command: "grep {{ jboss_new_version }} {{ jboss_home }}/standalone/configuration/patches/patch-history.xml"
+      register: patch_verification
+      failed_when: patch_verification.stdout == ""
+
+    - name: Create symlink for JBoss
+      file:
+         src: "{{jboss_home}}"
+         dest: "/opt/jboss-eap"
+         state: link
+         force: yes
+
+    - name: Modify JBoss EAP Configuration File
+      lineinfile:
+          state: present
+          path: "{{ jboss_home }}/bin/init.d/jboss-eap.conf"
+          regexp: "{{ item.regexp }}"
+          line: "{{ item.line }}"
+      with_items:
+        - {regexp: "^# JBOSS_USER=", line: "JBOSS_USER=jboss-eap"}
+        - {regexp: "^# JBOSS_CONFIG=", line: "JBOSS_CONFIG=standalone-ha.xml"}
+        - {regexp: "^# JBOSS_OPTS=", line: "JBOSS_OPTS=\"-b 0.0.0.0 -bprivate `hostname -i` -Djboss.node.name={{ inventory_hostname }}\""}
+
+    - name: Copy JBoss Service Configuration File
+      copy:
+          src: "{{ jboss_home }}/bin/init.d/jboss-eap.conf"
+          dest: "{{ jboss_eap_service_conf_dir }}/"
+          remote_src: True
+          owner: "{{ jboss_eap_user }}"
+          group: "{{ jboss_eap_group }}"
+
+    - name: Start JBoss server
+      shell: "nohup sh {{ eap_home }}/bin/standalone.sh -c standalone-full.xml -b 0.0.0.0
+-Djboss.as.management.blocking.timeout=5000 &> {{ jboss_logs }} &"
+      async: 60
+      poll: 0
+
+    - name: Sleep for the server to start up
+      pause:
+        seconds: "{{ sleep_interval }}"
+
+    - name: Check JBoss logs for errors
+      shell: "grep 'ERROR' {{ jboss_logs }}"
+      register: log_error_check
+      failed_when: log_error_check.stdout != ""
+
+    - name: Get JBoss version after applying patch
+      command: "{{ eap_home }}/bin/jboss-cli.sh --connect --commands=version"
+      register: jboss_version_output
+
+    - name: Display JBoss version after patch
+      debug:
+        msg: "{{ jboss_version_output.stdout }}"
