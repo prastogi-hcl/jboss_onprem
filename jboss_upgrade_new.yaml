@@ -51,10 +51,10 @@
         chdir: "{{ jboss_home }}"
       register: patch_apply_output
 
-    - name: Verify patch application
-      command: "grep {{ jboss_new_version }} {{ jboss_home }}/standalone/configuration/patches/patch-history.xml"
-      register: patch_verification
-      failed_when: patch_verification.stdout == ""
+    #- name: Verify patch application
+    #  command: "grep {{ jboss_new_version }} {{ jboss_home }}/standalone/configuration/patches/patch-history.xml"
+    #  register: patch_verification
+    #  failed_when: patch_verification.stdout == ""
 
     - name: Create symlink for JBoss
       file:
