@@ -16,7 +16,6 @@
     backup_dir: /opt/jboss-backup
     sleep_interval: 60
     jboss_logs: "{{ jboss_home }}/standalone/log/server.log"
-
   tasks:
     - name: Ensure backup directory exists
       file:
@@ -24,11 +23,9 @@
         state: directory
 
     - name: Backup JBoss home directory
-      command: tar czf {{ backup_dir }}/jboss-eap-7.4-backup-{{
-ansible_date_time.iso8601 }}.tar.gz -C {{ jboss_home }} .
+      command: tar czf {{ backup_dir }}/jboss-eap-7.4-backup-{{ansible_date_time.iso8601 }}.tar.gz -C {{ jboss_home }} .
       args:
-        creates: "{{ backup_dir }}/jboss-eap-7.4-backup-{{
-ansible_date_time.iso8601 }}.tar.gz"
+        creates: "{{ backup_dir }}/jboss-eap-7.4-backup-{{ansible_date_time.iso8601 }}.tar.gz"
 
     - name: Get JBoss version before applying patch
       command: "{{ jboss_home }}/bin/jboss-cli.sh --connect --commands=version"
@@ -86,8 +83,7 @@ ansible_date_time.iso8601 }}.tar.gz"
           group: "{{ jboss_eap_group }}"
 
     - name: Start JBoss server
-      shell: "nohup sh {{ eap_home }}/bin/standalone.sh -c standalone-full.xml -b 0.0.0.0
--Djboss.as.management.blocking.timeout=5000 &> {{ jboss_logs }} &"
+      shell: "nohup sh {{ eap_home }}/bin/standalone.sh -c standalone-full.xml -b 0.0.0.0 -Djboss.as.management.blocking.timeout=5000 &> {{jboss_logs}} &"
       async: 60
       poll: 0
 
