@@ -4,7 +4,8 @@
   become: yes
   tasks:
    - name: Generation of keys on host server
-     ansible.builtin.import_playbook: generation_keys.yaml
+     ansible.builtin.import_playbook: manage_ssh_keys.yaml
+   - name: Copying    
    - name: Include a play after another play
      ansible.builtin.import_playbook: jboss-eap.yaml
      vars_files:
