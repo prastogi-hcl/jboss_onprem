@@ -1,0 +1,8 @@
+---
+  - name: "Playing with Ansible and Git"
+    hosts: localhost
+    connection: local 
+    tasks:
+    - name: Execute Key generation on semaphore server
+      ansible.builtin.shell: manage_ssh_keys.sh
+       
