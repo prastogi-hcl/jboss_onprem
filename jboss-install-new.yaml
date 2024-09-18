@@ -1,0 +1,14 @@
+---
+- name: "JBoss EAP installation and configuration"
+  hosts: all
+  become: yes
+  tasks:
+   - name: Generation of keys on host server
+     ansible.builtin.import_playbook: generation_keys.yaml
+   - name: Include a play after another play
+     ansible.builtin.import_playbook: jboss-eap.yaml
+     vars_files:
+       - /tmp/vars.yaml
+      
+
+      
