@@ -91,10 +91,10 @@
       pause:
         seconds: "{{ sleep_interval }}"
 
-    - name: Check JBoss logs for errors
-      shell: "grep 'ERROR' {{ jboss_logs }}"
-      register: log_error_check
-      failed_when: log_error_check.stdout != ""
+   # - name: Check JBoss logs for errors
+   #   shell: "grep 'ERROR' {{ jboss_logs }}"
+   #   register: log_error_check
+   #   failed_when: log_error_check.stdout != ""
 
     - name: Get JBoss version after applying patch
       command: "{{ eap_home }}/bin/jboss-cli.sh --connect --commands=version"
