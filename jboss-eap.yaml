@@ -17,7 +17,7 @@
   tasks:
       - name: Install JBoss Requirements
         ansible.builtin.apt:
-           name: unzip, initscripts, hostname
+           name: unzip, hostname
            state: present
 
       - name: Check if service exists
