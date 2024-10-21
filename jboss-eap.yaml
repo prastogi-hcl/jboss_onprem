@@ -55,10 +55,11 @@
         file:
           state: absent
           path: "{{ eap_all }}"
+          
       - name: "Obtains JBoss repository"
-        get_url:
-           url: "{{ eap_link }}"
-           dest: "{{ eap_deploy_dir }}"
+        ansible.builtin.get_url module:
+                           url: "{{ eap_link }}"
+                           dest: "{{ eap_deploy_dir }}"
 
       - name: Unarchive EAP
         unarchive:
