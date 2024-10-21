@@ -65,8 +65,10 @@
       - name: "Obtains JBoss repository"
         copy:
           src: /tmp/jboss-eap-7.4.0.zip
-          dest: /opt      
-
+          dest: "{{ eap_deploy_dir }}"
+          owner: "{{ jboss_eap_user }}"
+          group: "{{ jboss_eap_group }}"
+          remote_src: yes
       - name: Unarchive EAP
         unarchive:
            src:  "{{ eap_deploy_dir }}/{{ eap_archive }}"
