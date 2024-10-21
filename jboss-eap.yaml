@@ -15,10 +15,10 @@
     jboss_eap_service_conf_dir: "/etc/default"
     sleep_interval: 60
   tasks:
-      - name: Install JBoss Requirements
-        ansible.builtin.dnf:
-           name: unzip, initscripts, hostname
-           state: present
+  #    - name: Install JBoss Requirements
+  #      ansible.builtin.dnf:
+  #         name: unzip, initscripts, hostname
+  #         state: present
 
       - name: Check if service exists
         stat: path=/etc/init.d/jboss-eap-rhel.sh
