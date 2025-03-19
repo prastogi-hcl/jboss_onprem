@@ -64,7 +64,7 @@
                    timeout: 60  # Increase the timeout if the connection is slow
       - name: "Obtains JBoss repository"
         copy:
-          src: /tmp/jboss-eap-7.4.0.zip
+          src: /opt/jboss-eap-7.4.0.zip
           dest: "{{ eap_deploy_dir }}"
           owner: "{{ jboss_eap_user }}"
           group: "{{ jboss_eap_group }}"
