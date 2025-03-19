@@ -1,6 +1,5 @@
 - name: Increase JBoss Heap Size
-  hosts: jboss-servers
-  become: yes
+  hosts: server
   vars:
     jboss_home: /opt/jboss-eap-7.4
     sleep_interval: 60
