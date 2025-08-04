@@ -60,7 +60,7 @@
         copy:
           src: /tmp/jboss-eap-7.4.0.zip
           dest: "{{ eap_deploy_dir }}"
-          
+          remote_src: yes
       #- name: "Obtains JBoss repository"
        # ansible.builtin.get_url:
         #           url: "{{ eap_link }}"
