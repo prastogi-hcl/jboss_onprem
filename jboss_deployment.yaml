@@ -1,6 +1,6 @@
 ---
 - name: "JBoss EAP installation and configuration"
-  hosts: server
+  hosts: jboss-servers
   vars:
     jboss_eap_user: jboss-eap
     jboss_eap_group: jboss-eap
