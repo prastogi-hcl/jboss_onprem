@@ -55,13 +55,18 @@
         file:
           state: absent
           path: "{{ eap_all }}"
+
+      - name: "Copy JBoss repository"
+        copy:
+          src: /tmp/jboss-eap-7.4.0.zip
+          dest: "{{ eap_deploy_dir }}"
           
-      - name: "Obtains JBoss repository"
-        ansible.builtin.get_url:
-                   url: "{{ eap_link }}"
-                   dest: "{{ eap_deploy_dir }}"
-                   validate_certs: no  # This can be set to 'no' if you are facing certificate issues
-                   timeout: 60  # Increase the timeout if the connection is slow
+      #- name: "Obtains JBoss repository"
+       # ansible.builtin.get_url:
+        #           url: "{{ eap_link }}"
+        #           dest: "{{ eap_deploy_dir }}"
+        #           validate_certs: no  # This can be set to 'no' if you are facing certificate issues
+        #           timeout: 60  # Increase the timeout if the connection is slow
       - name: "Obtains JBoss repository"
         copy:
           src: /opt/jboss-eap-7.4.0.zip
