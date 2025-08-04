@@ -119,5 +119,5 @@
       - name: sleep for a specified interval
         command: sleep '{{ sleep_interval }}'
       
-      - name: Create Admin Users juhan on each application
-        shell: "sh {{ eap_home }}/bin/add-user.sh juhan passw0rd"
+      #- name: Create Admin Users juhan on each application
+      #  shell: "sh {{ eap_home }}/bin/add-user.sh juhan passw0rd"
