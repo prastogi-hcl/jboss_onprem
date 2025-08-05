@@ -114,6 +114,8 @@
           group: "{{ jboss_eap_group }}"
 
       - name: Start EAP servers
+        become: true
+        become_user: "{{ jboss_eap_user }}"
         shell: "nohup sh {{ eap_home }}/bin/standalone.sh  -c standalone-full.xml -b 0.0.0.0 -Djboss.as.management.blocking.timeout=5000 2>&1 &"
 
       - name: sleep for a specified interval
